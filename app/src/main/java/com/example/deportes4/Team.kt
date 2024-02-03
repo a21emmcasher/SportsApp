@@ -7,5 +7,8 @@ data class Team(
     val idTeam: String,
 
     @SerializedName("strTeam")
-    val strTeam: String
+    val strTeam: String,
+
+    @SerializedName("strTeamBadge")
+    val strTeamBadge: String // Add a field for the team badge URL
 )

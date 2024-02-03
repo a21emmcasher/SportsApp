@@ -26,15 +26,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recyclerViewTeams)
-        adapter = TeamAdapter(teamsList) { team ->
-            val intent = Intent(this@MainActivity, EventDetailsActivity::class.java)
-            intent.putExtra("teamId", team.idTeam)
-            startActivity(intent)
-        }
-
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
 
         // Retrofit initialization
         val retrofit = Retrofit.Builder()
@@ -50,6 +41,17 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val teamResponse = response.body()
                     teamsList.addAll(teamResponse?.teams ?: emptyList())
+
+                    // Set the adapter after fetching data
+                    adapter = TeamAdapter(teamsList) { team ->
+                        val intent = Intent(this@MainActivity, EventDetailsActivity::class.java)
+                        intent.putExtra("teamId", team.idTeam)
+                        startActivity(intent)
+                    }
+
+                    recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                    recyclerView.adapter = adapter
+
                     adapter.notifyDataSetChanged()
                 } else {
                     Toast.makeText(this@MainActivity, "Failed to fetch teams. Code: ${response.code()}", Toast.LENGTH_SHORT).show()
