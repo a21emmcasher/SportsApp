@@ -8,10 +8,11 @@
         android:id="@+id/textViewHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All Teams from Spanish League"
-        android:textSize="18sp"
+        android:text="All Teams from English League"
+        android:textSize="24sp"
         android:gravity="center"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:textColor="#1B9C86"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTeams"
@@ -29,17 +30,24 @@
         android:id="@+id/btnViewEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="View Events"/>
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="122dp"
+        android:layout_marginBottom="16dp"
+        android:background="#DA95FF"
+        android:text="View Events"
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/btnViewEventResults"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/btnViewEvents"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="View Event Results"/>
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:text="View Event Results"
+        android:textColor="#000000"
+        android:background="#7AD1FF"/>
 </RelativeLayout>

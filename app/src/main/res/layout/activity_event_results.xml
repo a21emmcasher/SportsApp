@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:text="Event Results"
         android:textSize="20sp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:textColor="#1B9C86"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEventResults"

@@ -35,10 +35,8 @@ class EventDetailsActivity : AppCompatActivity() {
 
         val teamId = 4328
         if (teamId != null) {
-            // Fetch events for the selected team and season
             fetchEventsForTeamAndSeason(4328, "2014-2015")
         } else {
-            // Handle invalid teamId
             Toast.makeText(this, "Invalid team ID", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -47,24 +45,19 @@ class EventDetailsActivity : AppCompatActivity() {
     private fun fetchEventsForTeamAndSeason(teamId: Int, season: String) {
         val api = retrofit.create(ApiService::class.java)
 
-        // Make API call to get events for the specific team and season
         val call = api.getEventsForSeason(teamId, season)
         call.enqueue(object : Callback<EventResponse> {
             override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
                 if (response.isSuccessful) {
                     val events = response.body()?.events
-
-                    // Update UI with fetched events
                     updateUI(events)
                 } else {
-                    // Handle error
                     Toast.makeText(this@EventDetailsActivity, "Failed to fetch events. Code: ${response.code()}", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
-                // Handle failure
                 Toast.makeText(this@EventDetailsActivity, "Network error", Toast.LENGTH_SHORT).show()
                 finish()
             }
@@ -73,9 +66,7 @@ class EventDetailsActivity : AppCompatActivity() {
 
     private fun updateUI(events: List<Event>?) {
         // Update UI with real events for the selected team and season
-        // Modify as needed based on the structure of the API response
         eventAdapter.setEvents(events)
 
-        // Add more TextViews or other UI elements to display additional details
     }
 }

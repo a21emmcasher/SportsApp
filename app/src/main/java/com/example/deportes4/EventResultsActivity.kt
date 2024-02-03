@@ -34,10 +34,8 @@ class EventResultsActivity : AppCompatActivity() {
 
         val eventId = 652890
         if (eventId != null) {
-            // Fetch event results for the selected event
             fetchEventResults(eventId)
         } else {
-            // Handle invalid eventId
             Toast.makeText(this, "Invalid event ID", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -46,24 +44,20 @@ class EventResultsActivity : AppCompatActivity() {
     private fun fetchEventResults(eventId: Int) {
         val api = retrofit.create(ApiService::class.java)
 
-        // Make API call to get event results for the specific event
         val call = api.getEventResults(eventId)
         call.enqueue(object : Callback<EventResultsResponse> {
             override fun onResponse(call: Call<EventResultsResponse>, response: Response<EventResultsResponse>) {
                 if (response.isSuccessful) {
                     val eventResults = response.body()?.results
 
-                    // Update RecyclerView adapter with fetched event results
                     adapter.setData(eventResults)
                 } else {
-                    // Handle error
                     Toast.makeText(this@EventResultsActivity, "Failed to fetch event results. Code: ${response.code()}", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
 
             override fun onFailure(call: Call<EventResultsResponse>, t: Throwable) {
-                // Handle failure
                 Toast.makeText(this@EventResultsActivity, "Network error", Toast.LENGTH_SHORT).show()
                 finish()
             }
