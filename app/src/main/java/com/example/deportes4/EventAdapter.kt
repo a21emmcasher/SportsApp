@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class EventAdapter(private val events: List<Event>) : RecyclerView.Adapter<EventAdapter.ViewHolder>() {
+class EventAdapter(private val events: List<Event>, private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<EventAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
@@ -28,6 +28,18 @@ class EventAdapter(private val events: List<Event>) : RecyclerView.Adapter<Event
             itemView.findViewById<TextView>(R.id.eventNameTextView).text = event.strEvent
             // Add more bindings as needed
         }
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    itemClickListener.onItemClick(events[position])
+                }
+            }
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(event: Event)
     }
 }
 
