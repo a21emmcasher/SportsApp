@@ -1,25 +1,22 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
         android:id="@+id/textEventResults"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textEventDescription"
-        android:layout_marginTop="16dp"
         android:text="Event Results"
-        android:textSize="18sp"/>
+        android:textSize="20sp"
+        android:layout_marginBottom="8dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewEvents"
+        android:id="@+id/recyclerViewEventResults"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textEventResults"
         android:layout_marginTop="8dp"/>
 
-
-</LinearLayout>
+</RelativeLayout>

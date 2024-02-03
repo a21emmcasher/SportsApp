@@ -1,8 +1,10 @@
 package com.example.deportes4
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,18 +15,27 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity(), EventAdapter.OnItemClickListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: EventAdapter
-    private val eventsList = mutableListOf<Event>()
+    private lateinit var adapter: TeamAdapter
+    private val teamsList = mutableListOf<Team>()
 
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        recyclerView = findViewById(R.id.recyclerView)
-        adapter = EventAdapter(eventsList, this)
+        recyclerView = findViewById(R.id.recyclerViewTeams)
+        adapter = TeamAdapter(teamsList) { team ->
+            // Handle item click, navigate to EventDetailsActivity for the selected team
+            val intent = Intent(this@MainActivity, EventDetailsActivity::class.java)
+            intent.putExtra("teamId", team.idTeam)
+            startActivity(intent)
+        }
+
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
@@ -36,41 +47,42 @@ class MainActivity : AppCompatActivity(), EventAdapter.OnItemClickListener {
 
         val api = retrofit.create(ApiService::class.java)
 
-        // Example team ID and season (replace with actual values)
-        val teamId = 4328
-        val season = "2014-2015"
-
-        // Fetching events for a specific season
-        val call = api.getSeasonEvents(teamId, season)
-        call.enqueue(object : Callback<EventResponse> {
-            override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
+        // Fetch all teams in a league (example: Soccer in Spain)
+        val call = api.getAllTeams("Soccer", "Spain")
+        call.enqueue(object : Callback<TeamResponse> {
+            override fun onResponse(call: Call<TeamResponse>, response: Response<TeamResponse>) {
                 if (response.isSuccessful) {
-                    val eventResponse = response.body()
-                    eventsList.addAll(eventResponse?.events ?: emptyList())
+                    val teamResponse = response.body()
+                    teamsList.addAll(teamResponse?.teams ?: emptyList())
                     adapter.notifyDataSetChanged()
                 } else {
                     // Handle error
-                    Toast.makeText(this@MainActivity, "Failed to fetch events. Code: ${response.code()}", Toast.LENGTH_SHORT).show()
-                    Log.e("MainActivity", "API call failed with code: ${response.code()}")
-                    Log.e("MainActivity", "Error body: ${response.errorBody()?.string()}")
+                    Toast.makeText(this@MainActivity, "Failed to fetch teams. Code: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<EventResponse>, t: Throwable) {
+            override fun onFailure(call: Call<TeamResponse>, t: Throwable) {
                 // Handle failure
                 Toast.makeText(this@MainActivity, "Network error", Toast.LENGTH_SHORT).show()
-                Log.e("MainActivity", "API call failed", t)
             }
         })
-
-    }
-    override fun onItemClick(event: Event) {
-        // Handle item click here
-        val intent = Intent(this@MainActivity, EventDetailsActivity::class.java)
-        intent.putExtra("eventId", event.idEvent) // Assuming idEvent is the unique identifier for the event
-        startActivity(intent)
+        val btnViewEvents: Button = findViewById(R.id.btnViewEvents)
+        btnViewEvents.setOnClickListener {
+            // Navigate to EventDetailsActivity
+            val intent = Intent(this@MainActivity, EventDetailsActivity::class.java)
+            // Pass any necessary data using intent extras
+            startActivity(intent)
+        }
+        val btnViewEventResults: Button = findViewById(R.id.btnViewEventResults)
+        btnViewEventResults.setOnClickListener {
+            // Navigate to EventResultsActivity
+            val intent = Intent(this@MainActivity, EventResultsActivity::class.java)
+            // Pass any necessary data using intent extras
+            startActivity(intent)
+        }
     }
 
 }
+
 
 

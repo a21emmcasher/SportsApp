@@ -6,40 +6,35 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class EventAdapter(private val events: List<Event>, private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<EventAdapter.ViewHolder>() {
+class EventAdapter : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
-        return ViewHolder(view)
+    private var events: List<Event>? = null
+
+    fun setEvents(events: List<Event>?) {
+        this.events = events
+        notifyDataSetChanged()
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val event = events[position]
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
+        return EventViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
+        val event = events?.get(position)
         holder.bind(event)
     }
 
     override fun getItemCount(): Int {
-        return events.size
+        return events?.size ?: 0
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(event: Event) {
-            // Bind data to the views in the item layout
-            itemView.findViewById<TextView>(R.id.eventNameTextView).text = event.strEvent
-            // Add more bindings as needed
-        }
-        init {
-            itemView.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    itemClickListener.onItemClick(events[position])
-                }
-            }
-        }
-    }
+    class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val eventTextView: TextView = itemView.findViewById(R.id.textEvent)
 
-    interface OnItemClickListener {
-        fun onItemClick(event: Event)
+        fun bind(event: Event?) {
+            eventTextView.text = "Event: ${event?.strEvent}\nDate: ${event?.dateEvent}\n\n"
+        }
     }
 }
 

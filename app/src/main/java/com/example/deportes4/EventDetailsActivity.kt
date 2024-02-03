@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,6 +15,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class EventDetailsActivity : AppCompatActivity() {
 
     private lateinit var retrofit: Retrofit
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var eventAdapter: EventAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,37 +27,43 @@ class EventDetailsActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val eventId = intent.getIntExtra("eventId", -1)
-        if (eventId != -1) {
-            // Fetch event details using the eventId and display them in the activity
-            fetchEventDetails(eventId)
+        recyclerView = findViewById(R.id.recyclerViewEvents)
+        eventAdapter = EventAdapter()
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = eventAdapter
+
+        val teamId = 4328
+        if (teamId != null) {
+            // Fetch events for the selected team and season
+            fetchEventsForTeamAndSeason(4328, "2014-2015")
         } else {
-            // Handle invalid eventId
-            Toast.makeText(this, "Invalid event ID", Toast.LENGTH_SHORT).show()
-            finish() // Finish the activity if the eventId is invalid
+            // Handle invalid teamId
+            Toast.makeText(this, "Invalid team ID", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 
-    private fun fetchEventDetails(eventId: Int) {
+    private fun fetchEventsForTeamAndSeason(teamId: Int, season: String) {
         val api = retrofit.create(ApiService::class.java)
 
-        // Make API call to get details for the specific event
-        val call = api.getEventDetails(eventId)
-        call.enqueue(object : Callback<EventDetailsResponse> {
-            override fun onResponse(call: Call<EventDetailsResponse>, response: Response<EventDetailsResponse>) {
+        // Make API call to get events for the specific team and season
+        val call = api.getEventsForSeason(teamId, season)
+        call.enqueue(object : Callback<EventResponse> {
+            override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
                 if (response.isSuccessful) {
-                    val eventDetails = response.body()?.events?.get(0)
+                    val events = response.body()?.events
 
-                    // Update UI with fetched details
-                    updateUI(eventDetails)
+                    // Update UI with fetched events
+                    updateUI(events)
                 } else {
                     // Handle error
-                    Toast.makeText(this@EventDetailsActivity, "Failed to fetch event details. Code: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EventDetailsActivity, "Failed to fetch events. Code: ${response.code()}", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
 
-            override fun onFailure(call: Call<EventDetailsResponse>, t: Throwable) {
+            override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                 // Handle failure
                 Toast.makeText(this@EventDetailsActivity, "Network error", Toast.LENGTH_SHORT).show()
                 finish()
@@ -61,13 +71,10 @@ class EventDetailsActivity : AppCompatActivity() {
         })
     }
 
-    private fun updateUI(eventDetails: EventDetails?) {
-        val titleTextView: TextView = findViewById(R.id.textEventTitle)
-        val descriptionTextView: TextView = findViewById(R.id.textEventDescription)
-
-        // Update UI with real event details
-        titleTextView.text = eventDetails?.strEvent ?: "Event Title Not Available"
-        descriptionTextView.text = eventDetails?.strDescriptionEN ?: "Event Description Not Available"
+    private fun updateUI(events: List<Event>?) {
+        // Update UI with real events for the selected team and season
+        // Modify as needed based on the structure of the API response
+        eventAdapter.setEvents(events)
 
         // Add more TextViews or other UI elements to display additional details
     }
